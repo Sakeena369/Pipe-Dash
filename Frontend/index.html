@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mario Game Menu</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+  />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    .container {
+      position: relative;
+      width: 1160px;
+      margin: 4% auto;
+      border: 10px solid black;
+    }
+
+    canvas {
+      display: block;
+      background-image: url('images/back.png');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      width: 100%;
+      height: 650px;
+      box-shadow: 0 0 30px #ffcc00;
+      border: 5px solid whitesmoke;
+    }
+
+    .menu-btn {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      margin: 15px 0;
+      font-size: 14px;
+      background-color: #ffcc00;
+      color: #000;
+      border: 3px solid #333;
+      box-shadow: 4px 4px 0 #333;
+      transition: all 0.1s ease-in-out;
+    }
+
+    .menu-btn:hover {
+      background-color: #ffe066;
+      box-shadow: 2px 2px 0 #333;
+      transform: translate(-50%, 2px);
+    }
+
+    .menu-btn:nth-of-type(1) { top: 37%; }
+    .menu-btn:nth-of-type(2) { top: 46%; }
+    .menu-btn:nth-of-type(3) { top: 55%; }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background: #000;
+      color: #fff;
+      padding: 20px;
+      border: 3px solid #ffcc00;
+      border-radius: 8px;
+      width: 400px;
+      font-family: 'Press Start 2P', cursive;
+      text-align: center;
+    }
+
+    .pixel-input {
+      width: 90%;
+      margin: 10px auto;
+      padding: 8px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      border: 3px solid #ffcc00;
+      background-color: #fff;
+      color: #000;
+    }
+
+    .pixel-input:focus {
+      outline: none;
+      border-color: #ffe066;
+    }
+
+    .pixel-btn {
+      display: block;
+      width: 90%;
+      margin: 8px auto;
+      padding: 10px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      background-color: #ffcc00;
+      color: #000;
+      border: 3px solid #333;
+      box-shadow: 4px 4px 0 #333;
+      transition: all 0.1s ease-in-out;
+    }
+
+    .pixel-btn:hover {
+      background-color: #ffe066;
+      box-shadow: 2px 2px 0 #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas id="gameCanvas" width="1160" height="650"></canvas>
+    <button onclick="startGame()" class="btn menu-btn">Start Game</button>
+    <button onclick="openPlayerModal()" class="btn menu-btn">Player Name</button>
+    <button onclick="leaderboard()" class="btn menu-btn">LeaderBoard</button>
+
+    
+    <div id="playerModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h3>Select Player</h3>
+        <select id="playerSelect" class="pixel-input">
+         
+        </select>
+        <input type="text" id="newPlayerName" placeholder="New Player Name" class="pixel-input" />
+        <button onclick="addNewPlayer()" class="pixel-btn">Add New Player</button>
+        <button onclick="saveSelectedPlayer()" class="pixel-btn">Select Player</button>
+        <button onclick="closePlayerModal()" class="pixel-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function startGame() {
+      const playerName = localStorage.getItem('playerName');
+      if (!playerName) {
+        alert("⚠️ Please select a player first!");
+        openPlayerModal();
+        return;
+      }
+      window.location.href = 'game.html';
+    }
+
+    function leaderboard() {
+      window.location.href = 'leaderboard.html';
+    }
+
+    function openPlayerModal() {
+      loadPlayers();
+      document.getElementById('playerModal').style.display = 'flex';
+    }
+
+    function closePlayerModal() {
+      document.getElementById('playerModal').style.display = 'none';
+    }
+
+    function loadPlayers() {
+      const players = JSON.parse(localStorage.getItem('players') || '[]');
+      const select = document.getElementById('playerSelect');
+      select.innerHTML = "";
+      players.forEach(player => {
+        const option = document.createElement('option');
+        option.value = player;
+        option.textContent = player;
+        select.appendChild(option);
+      });
+    }
+
+    function addNewPlayer() {
+      const newName = document.getElementById('newPlayerName').value.trim();
+      if (newName) {
+        let players = JSON.parse(localStorage.getItem('players') || '[]');
+        if (!players.includes(newName)) {
+          players.push(newName);
+          localStorage.setItem('players', JSON.stringify(players));
+          loadPlayers();
+          document.getElementById('newPlayerName').value = "";
+          alert(`✅ Added new player: ${newName}`);
+        } else {
+          alert("⚠️ Player already exists!");
+        }
+      } else {
+        alert("⚠️ Enter a name.");
+      }
+    }
+
+    function saveSelectedPlayer() {
+      const selected = document.getElementById('playerSelect').value;
+      if (selected) {
+        localStorage.setItem('playerName', selected);
+        alert(`🎮 Selected player: ${selected}`);
+        closePlayerModal();
+      }
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

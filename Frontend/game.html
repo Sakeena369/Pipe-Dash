@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mario Game</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+      .menu-btn {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      margin: 18px 0;
+      font-size: 14px;
+      background-color: #ffcc00;
+      color: #000;
+      border: 3px solid #333;
+      box-shadow: 4px 4px 0 #333;
+      transition: all 0.1s ease-in-out;
+      display: flex;
+      align-items: center; /* Aligns text and icon vertically */
+      justify-content: center; /* Centers content horizontally */
+      gap: 8px;
+      margin-top: 8%;
+      display: none; 
+      font-size: 17px;
+    }
+
+    .menu-btn img {
+  height: 45px; /* Smaller size to match font */
+  width: 45px;
+  vertical-align: middle; /* Helps align */
+}
+
+    .menu-btn:hover {
+      background-color: #ffe066;
+      box-shadow: 2px 2px 0 #333;
+      transform: translate(-50%, 2px);
+    }
+
+    input.score {
+  position: absolute;
+  top: 4%;           
+  right: 2%;          
+  font-size: 20px;
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  pointer-events: none; 
+  text-align: right;    
+}
+
+  </style>
+
+</head>
+<body>
+
+
+  <div class="container">
+    <div id="instructionsModal" class="modal">
+  <div class="modal-content">
+    <h2>🎮 How to Play</h2>
+    <ul>
+      <li>⬆️ Press <b>UP Arrow</b> or <b> Space bar </b> to jump</li>
+      <li>🏃‍♂️ Avoid obstacles to survive</li>
+      <li>💥 Game ends if you hit an obstacle</li>
+    </ul>
+    <button id="startBtn">Start Game</button>
+  </div>
+</div>
+
+    <button onclick="home()" style="margin-top: 2%; margin-left: 2%;"> <img src="images/home.png" width="60px" height="60px" style="background-color: #50d5ff;"> </button>
+          <input id="score" type="text" class="score" value="Score: 0" readonly>
+
+    <div class="game-board">
+      <img src="images/clouds.png" class="clouds" alt="">
+      <img src="images/mario.gif" class="mario" alt="">
+      <img src="images/pipe.png" class="pipe" alt="">
+      <span class="game_over">Game Over</span>
+      <button class="menu-btn" onclick="restart()">Restart <img src="images/restart.png"></button> 
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

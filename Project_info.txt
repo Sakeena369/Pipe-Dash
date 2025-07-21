@@ -1,0 +1,14 @@
+The VS extensions to be that are required for the game:
+1. ES&for front end
+2. prettier to format the code.
+3. TypeScript: adds typescript language support
+4. MongoDB: to browse mongo db database
+5. rest client to test backend API from the vs code.
+6. npm Intellisense: it auto suggests npm packages and imports.
+7. Path Intellisense: Helps with file path suggestions.
+
+
+
+1. Created backend and front end folder
+under backend folder create a src folder in which the typescript files or templates will be added.
+under src add server.ts file

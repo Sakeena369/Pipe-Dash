@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mario Game LeaderBoard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .leaderboard-container {
+      background: url('images/back1.png') no-repeat center center;
+      background-size: cover;
+      border: 5px solid whitesmoke;
+      width: 90%;
+      max-width: 900px;
+      padding: 30px;
+      box-shadow: 0 0 30px #ffcc00;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #ffcc00;
+      text-shadow: 2px 2px 0 #333;
+    }
+    table {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 15px;
+      text-align: center;
+      border: 2px solid #ffcc00;
+    }
+    th {
+      background-color: #ffcc00;
+      color: #000;
+    }
+    td {
+      color: #fff;
+    }
+    tr.highlight {
+      background-color: rgba(255, 204, 0, 0.3); /* Light yellow highlight */
+    }
+    .btn-back {
+      display: block;
+      margin: 20px auto 0;
+      background-color: #ffcc00;
+      color: #000;
+      border: 3px solid #333;
+      box-shadow: 4px 4px 0 #333;
+      font-size: 16px;
+      padding: 10px 20px;
+    }
+    .btn-back:hover {
+      background-color: #ffe066;
+      box-shadow: 2px 2px 0 #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="leaderboard-container">
+    <h1>🏆 LeaderBoard 🏆</h1>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player Name</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard">
+        <tr><td colspan="3">Loading scores...</td></tr>
+      </tbody>
+    </table>
+    <button onclick="goBack()" class="btn btn-back">⬅ Back to Menu</button>
+  </div>
+
+  <script>
+    const leaderboard = document.getElementById("leaderboard");
+    const currentPlayer = localStorage.getItem("playerName"); // Get current player name
+
+    async function fetchHighScores() {
+      if (!leaderboard) return;
+      try {
+        const res = await fetch("http://localhost:5000/api/scores");
+        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
+        const scores = await res.json();
+
+        // 🔥 Keep only highest score per player
+        const highestScores = new Map();
+        scores.forEach(entry => {
+          if (!highestScores.has(entry.player) || highestScores.get(entry.player) < entry.score) {
+            highestScores.set(entry.player, entry.score);
+          }
+        });
+
+        // 🔥 Convert Map to array & sort by score descending
+        const uniqueScores = Array.from(highestScores, ([player, score]) => ({ player, score }))
+          .sort((a, b) => b.score - a.score);
+
+        // Clear old rows
+        leaderboard.innerHTML = "";
+
+        // Render leaderboard
+        uniqueScores.forEach((entry, index) => {
+          const isCurrentPlayer = entry.player === currentPlayer;
+          const highlightClass = isCurrentPlayer ? "highlight" : "";
+          const row = `<tr class="${highlightClass}">
+            <td>${index + 1}</td>
+            <td>${entry.player}</td>
+            <td>${entry.score}</td>
+          </tr>`;
+          leaderboard.insertAdjacentHTML('beforeend', row);
+        });
+
+      } catch (err) {
+        console.error("❌ Failed to fetch scores:", err);
+        leaderboard.innerHTML = "<tr><td colspan='3'>⚠️ Could not load scores. Try again later.</td></tr>";
+      }
+    }
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchHighScores);
+  </script>
+</body>
+</html>
