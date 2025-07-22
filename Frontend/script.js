@@ -9,6 +9,9 @@ let gameEnded = false;
 let gameStarted = false; // 🚨 New flag to block gameplay until "Start Game"
 
 // 🎵 Sounds
+
+const endgame=new Audio('sound/endgame.mp3');
+endgame.volume = 1;
 const jumpSound = new Audio('sound/jump.mp3');
 jumpSound.volume = 0.5;
 
@@ -57,6 +60,7 @@ function startGame() {
 
       clouds.style.animation = 'none';
       clouds.style.left = `${cloudsPosition}px`;
+      endgame.play();
 
       mario.src = "images/game-over.png";
       mario.style.width = '75px';
