@@ -6,16 +6,13 @@ let score = document.querySelector('.score');
 let scoreValue = 0;
 let passedPipe = false;
 let gameEnded = false;
-let gameStarted = false; // 🚨 New flag to block gameplay until "Start Game"
+let gameStarted = false; //  New flag to block gameplay until "Start Game"
 
-// 🎵 Sounds
-
-const endgame=new Audio('sound/endgame.mp3');
-endgame.volume = 1;
+//  Sounds
+const endgame = new Audio('sound/end_game.mp3'); //  Updated file name
 const jumpSound = new Audio('sound/jump.mp3');
-jumpSound.volume = 0.5;
 
-// 🎮 Get player name
+//  Get player name
 let playerName = localStorage.getItem("playerName");
 if (!playerName) {
   playerName = prompt("Enter your player name:") || "Player1";
@@ -34,15 +31,15 @@ async function postScore(player, score) {
       body: JSON.stringify({ player, score }),
     });
     if (!response.ok) throw new Error(`Server error: ${response.status}`);
-    console.log("✅ Score posted successfully");
+    console.log(" Score posted successfully");
   } catch (err) {
-    console.error("❌ Failed to post score:", err);
+    console.error(" Failed to post score:", err);
   }
 }
 
-// 🚀 Start the game logic
+//  Start the game logic
 function startGame() {
-  gameStarted = true; // ✅ Allow gameplay
+  gameStarted = true; //  Allow gameplay
   scoreValue = 0;
   updateScoreDisplay();
 
@@ -60,7 +57,9 @@ function startGame() {
 
       clouds.style.animation = 'none';
       clouds.style.left = `${cloudsPosition}px`;
-      endgame.play();
+
+      
+      playEndgameSound();
 
       mario.src = "images/game-over.png";
       mario.style.width = '75px';
@@ -94,12 +93,34 @@ function startGame() {
   }, 10);
 }
 
-// ⬆️ Jump function (blocked if game not started)
+//  Safe function to play endgame sound
+function playEndgameSound() {
+  // Resume audio context (needed in Chrome)
+  if (typeof AudioContext !== "undefined" || typeof webkitAudioContext !== "undefined") {
+    const AudioCtx = AudioContext || webkitAudioContext;
+    const context = new AudioCtx();
+    if (context.state === "suspended") {
+      context.resume();
+    }
+  }
+
+  endgame.currentTime = 0;
+  endgame.volume = 0.9;
+  endgame.play().then(() => {
+    console.log("Endgame sound played");
+  }).catch(err => {
+    console.warn("Endgame sound blocked:", err);
+  });
+}
+
+//  Jump function (blocked if game not started)
 const jump = () => {
   if (!gameEnded && gameStarted) {
     mario.classList.add('jump');
     jumpSound.currentTime = 0;
-    jumpSound.play();
+    jumpSound.play().catch(err => {
+      console.warn(" Jump sound was blocked:", err);
+    });
 
     setTimeout(() => {
       mario.classList.remove('jump');
@@ -111,11 +132,11 @@ document.addEventListener('keydown', (e) => {
   if (gameStarted) {
     jump();
   } else {
-    e.preventDefault(); // Block keys until started
+    e.preventDefault();
   }
 });
 
-// 🏠 Navigation
+
 function home() {
   window.location.href = "index.html";
 }
@@ -124,7 +145,7 @@ function restart() {
   window.location.href = "game.html";
 }
 
-// 📋 Show instructions modal at start
+//  Show instructions modal at start
 window.onload = () => {
   const modal = document.getElementById("instructionsModal");
   const startBtn = document.getElementById("startBtn");
@@ -133,6 +154,17 @@ window.onload = () => {
 
   startBtn.addEventListener("click", () => {
     modal.style.display = "none"; // Hide modal
+
+    //  Preload and unlock endgame sound
+    endgame.play().then(() => {
+      endgame.pause();
+      endgame.currentTime = 0;
+      endgame.volume = 0.9;
+      console.log(" Endgame sound unlocked for autoplay");
+    }).catch(err => {
+      console.warn(" Endgame preload blocked:", err);
+    });
+
     startGame(); // Start the actual game
   });
 };
