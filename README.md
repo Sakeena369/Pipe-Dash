@@ -110,7 +110,7 @@ Pipe-Dash/
 │   ├── package.json
 ├── Frontend/
 │   ├── images/
-│   ├── images/outputs
+│   ├── output
 │   ├── sound/
 │   ├── index.html
 │   ├── game.html
