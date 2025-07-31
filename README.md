@@ -20,7 +20,7 @@ Pipe-Dash is a Mario-themed browser game built with HTML, CSS, JavaScript, and a
 
 | Gameplay                     | Leaderboard                   |
 |-----------------------------|---------------------------------|
-| ![Game Screen](images/outputs/game.png) | ![Leaderboard Screen](images/outputs/leaderboard.png) |
+| ![Game Screen](Frontend/output/1.jpeg) | ![Leaderboard Screen](Frontend/output/5.jpeg) |
 
 ---
 
